@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +38,7 @@ import org.apache.hadoop.hbase.replication.WALEntryFilter;
 import org.apache.hadoop.hbase.wal.WAL.Entry;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.Service;
 
 @InterfaceAudience.Private
 public class VisibilityReplicationEndpoint implements ReplicationEndpoint {
@@ -131,13 +135,19 @@ public class VisibilityReplicationEndpoint implements ReplicationEndpoint {
   }
 
   @Override
-  public ListenableFuture<State> start() {
-    return delegator.start();
+  public Service startAsync() {
+    delegator.startAsync();
+    return this;
   }
 
   @Override
-  public State startAndWait() {
-    return delegator.startAndWait();
+  public void awaitRunning() {
+    delegator.awaitRunning();
+  }
+
+  @Override
+  public void awaitRunning(long l, TimeUnit timeUnit) throws TimeoutException {
+    delegator.awaitRunning(l, timeUnit);
   }
 
   @Override
@@ -146,13 +156,28 @@ public class VisibilityReplicationEndpoint implements ReplicationEndpoint {
   }
 
   @Override
-  public ListenableFuture<State> stop() {
-    return delegator.stop();
+  public Service stopAsync() {
+    delegator.stopAsync();
+    return this;
   }
 
   @Override
-  public State stopAndWait() {
-    return delegator.stopAndWait();
+  public void awaitTerminated() {
+    delegator.awaitTerminated();
   }
 
+  @Override
+  public void awaitTerminated(long l, TimeUnit timeUnit) throws TimeoutException {
+    delegator.awaitTerminated(l, timeUnit);
+  }
+
+  @Override
+  public Throwable failureCause() {
+    return delegator.failureCause();
+  }
+
+  @Override
+  public void addListener(Listener listener, Executor executor) {
+    delegator.addListener(listener, executor);
+  }
 }

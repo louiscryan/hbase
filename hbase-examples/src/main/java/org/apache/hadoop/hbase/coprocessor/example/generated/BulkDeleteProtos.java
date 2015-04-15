@@ -483,11 +483,11 @@ public final class BulkDeleteProtos {
       }
       if (hasDeleteType()) {
         hash = (37 * hash) + DELETETYPE_FIELD_NUMBER;
-        hash = (53 * hash) + hashEnum(getDeleteType());
+        hash = (53 * hash) + com.google.protobuf.Internal.hashEnum(getDeleteType());
       }
       if (hasTimestamp()) {
         hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
-        hash = (53 * hash) + hashLong(getTimestamp());
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTimestamp());
       }
       if (hasRowBatchSize()) {
         hash = (37 * hash) + ROWBATCHSIZE_FIELD_NUMBER;
@@ -1211,11 +1211,11 @@ public final class BulkDeleteProtos {
       hash = (19 * hash) + getDescriptorForType().hashCode();
       if (hasRowsDeleted()) {
         hash = (37 * hash) + ROWSDELETED_FIELD_NUMBER;
-        hash = (53 * hash) + hashLong(getRowsDeleted());
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getRowsDeleted());
       }
       if (hasVersionsDeleted()) {
         hash = (37 * hash) + VERSIONSDELETED_FIELD_NUMBER;
-        hash = (53 * hash) + hashLong(getVersionsDeleted());
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVersionsDeleted());
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;

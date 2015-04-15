@@ -2060,12 +2060,6 @@ public class RpcServer implements RpcServerInterface {
     return conf;
   }
 
-  /** Sets the socket buffer size used for responding to RPCs.
-   * @param size send size
-   */
-  @Override
-  public void setSocketSendBufSize(int size) { this.socketSendBufferSize = size; }
-
   @Override
   public boolean isStarted() {
     return this.started;

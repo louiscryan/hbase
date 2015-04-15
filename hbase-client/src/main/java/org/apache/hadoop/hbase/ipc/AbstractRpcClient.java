@@ -145,7 +145,7 @@ public abstract class AbstractRpcClient implements RpcClient {
    * @param conf configuration
    * @return The compressor to use on this client.
    */
-  private static CompressionCodec getCompressor(final Configuration conf) {
+  static CompressionCodec getCompressor(final Configuration conf) {
     String className = conf.get("hbase.client.rpc.compressor", null);
     if (className == null || className.isEmpty()) return null;
     try {

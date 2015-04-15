@@ -211,7 +211,7 @@ public final class TestDelayedRpcProtos {
       hash = (19 * hash) + getDescriptorForType().hashCode();
       if (hasDelay()) {
         hash = (37 * hash) + DELAY_FIELD_NUMBER;
-        hash = (53 * hash) + hashBoolean(getDelay());
+        hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getDelay());
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;

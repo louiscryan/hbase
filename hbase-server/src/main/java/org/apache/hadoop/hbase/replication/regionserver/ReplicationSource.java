@@ -228,7 +228,7 @@ public class ReplicationSource extends Thread
     metrics.clear();
     if (replicationEndpoint.state() == Service.State.STARTING
         || replicationEndpoint.state() == Service.State.RUNNING) {
-      replicationEndpoint.stopAndWait();
+      replicationEndpoint.stopAsync().awaitTerminated();
     }
   }
 
@@ -238,7 +238,8 @@ public class ReplicationSource extends Thread
     this.sourceRunning = true;
     try {
       // start the endpoint, connect to the cluster
-      Service.State state = replicationEndpoint.start().get();
+      replicationEndpoint.startAsync().awaitRunning();
+      Service.State state =  replicationEndpoint.state();
       if (state != Service.State.RUNNING) {
         LOG.warn("ReplicationEndpoint was not started. Exiting");
         uninitialize();
@@ -361,7 +362,7 @@ public class ReplicationSource extends Thread
     }
     ListenableFuture<Service.State> future = null;
     if (this.replicationEndpoint != null) {
-      future = this.replicationEndpoint.stop();
+      this.replicationEndpoint.stopAsync();
     }
     if (join) {
       for (ReplicationSourceWorkerThread worker : workers) {
@@ -370,7 +371,7 @@ public class ReplicationSource extends Thread
       }
       if (future != null) {
         try {
-          future.get();
+          this.replicationEndpoint.awaitTerminated();
         } catch (Exception e) {
           LOG.warn("Got exception:" + e);
         }

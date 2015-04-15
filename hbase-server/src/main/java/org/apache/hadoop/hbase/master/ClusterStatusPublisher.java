@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.ClusterStatus;
@@ -247,7 +248,8 @@ public class ClusterStatusPublisher extends ScheduledChore {
   public static class MulticastPublisher implements Publisher {
     private DatagramChannel channel;
     private final EventLoopGroup group = new NioEventLoopGroup(
-        1, Threads.newDaemonThreadFactory("hbase-master-clusterStatusPublisher"));
+        1, Executors.newFixedThreadPool(1, Threads.newDaemonThreadFactory(
+        "hbase-master-clusterStatusPublisher")));
 
     public MulticastPublisher() {
     }

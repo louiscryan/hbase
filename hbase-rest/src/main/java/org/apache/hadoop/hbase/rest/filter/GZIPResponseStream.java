@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.hadoop.hbase.classification.InterfaceAudience;
@@ -30,12 +31,14 @@ import org.apache.hadoop.hbase.classification.InterfaceAudience;
 @InterfaceAudience.Private
 public class GZIPResponseStream extends ServletOutputStream
 {
+  private final ServletOutputStream base;
   private HttpServletResponse response;
   private GZIPOutputStream out;
 
   public GZIPResponseStream(HttpServletResponse response) throws IOException {
     this.response = response;
-    this.out = new GZIPOutputStream(response.getOutputStream());
+    base = response.getOutputStream();
+    this.out = new GZIPOutputStream(base);
     response.addHeader("Content-Encoding", "gzip");
   }
 
@@ -74,5 +77,15 @@ public class GZIPResponseStream extends ServletOutputStream
 
   public void finish() throws IOException {
     out.finish();
+  }
+
+  @Override
+  public boolean isReady() {
+    return base.isReady();
+  }
+
+  @Override
+  public void setWriteListener(WriteListener writeListener) {
+    base.setWriteListener(writeListener);
   }
 }

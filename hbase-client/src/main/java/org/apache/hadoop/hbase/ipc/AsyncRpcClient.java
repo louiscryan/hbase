@@ -39,6 +39,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -135,8 +136,12 @@ public class AsyncRpcClient extends AbstractRpcClient {
       if (LOG.isDebugEnabled()) {
         LOG.debug("Create NioEventLoopGroup with maxThreads = " + maxThreads);
       }
+      int parallelism = maxThreads == 0
+          ? Runtime.getRuntime().availableProcessors() * 2 : maxThreads;
       return new Pair<EventLoopGroup, Class<? extends Channel>>(new NioEventLoopGroup(maxThreads,
-          Threads.newDaemonThreadFactory("AsyncRpcChannel")), NioSocketChannel.class);
+          Executors.newFixedThreadPool(parallelism, Threads.newDaemonThreadFactory(
+              "AsyncRpcChannel"))),
+          NioSocketChannel.class);
     }
   }
 

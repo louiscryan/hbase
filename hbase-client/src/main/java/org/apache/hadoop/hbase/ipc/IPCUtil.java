@@ -45,6 +45,7 @@ import org.apache.hadoop.io.compress.Compressor;
 import org.apache.hadoop.io.compress.Decompressor;
 
 import com.google.common.base.Preconditions;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.Message;
 
@@ -165,6 +166,51 @@ public class IPCUtil {
       }
     }
     return baos.getByteBuffer();
+  }
+
+  /**
+   * Puts CellScanner Cells into a cell block using passed in <code>codec</code> and/or
+   * <code>compressor</code>.
+   * @param codec
+   * @param compressor
+   * @param cellScanner
+   * @param pool Pool of ByteBuffers to make use of. Can be null and then we'll allocate
+   * our own ByteBuffer.
+   * @return Null or byte buffer filled with a cellblock filled with passed-in Cells encoded using
+   * passed in <code>codec</code> and/or <code>compressor</code>; the returned buffer has been
+   * flipped and is ready for reading.  Use limit to find total size. If <code>pool</code> was not
+   * null, then this returned ByteBuffer came from there and should be returned to the pool when
+   * done.
+   * @throws IOException
+   */
+  @SuppressWarnings("resource")
+  public void buildCellBlockToStream(final Codec codec, final CompressionCodec compressor,
+                                   final CellScanner cellScanner, OutputStream stream)
+      throws IOException {
+    if (cellScanner == null) return;
+    if (codec == null) throw new CellScannerButNoCodecException();
+    OutputStream os = stream;
+    Compressor poolCompressor = null;
+    try {
+      if (compressor != null) {
+        if (compressor instanceof Configurable) ((Configurable)compressor).setConf(this.conf);
+        poolCompressor = CodecPool.getCompressor(compressor);
+        os = compressor.createOutputStream(os, poolCompressor);
+      }
+      Codec.Encoder encoder = codec.getEncoder(os);
+      int count = 0;
+      while (cellScanner.advance()) {
+        encoder.write(cellScanner.current());
+        count++;
+      }
+      encoder.flush();
+      // If no cells, don't mess around.  Just return null (could be a bunch of existence checking
+      // gets or something -- stuff that does not return a cell).
+      if (count == 0) return;
+    } finally {
+      os.close();
+      if (poolCompressor != null) CodecPool.returnCompressor(poolCompressor);
+    }
   }
 
   /**

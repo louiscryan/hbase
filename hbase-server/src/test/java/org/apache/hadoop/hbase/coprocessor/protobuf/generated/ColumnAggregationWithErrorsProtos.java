@@ -749,7 +749,7 @@ public final class ColumnAggregationWithErrorsProtos {
       hash = (19 * hash) + getDescriptorForType().hashCode();
       if (hasSum()) {
         hash = (37 * hash) + SUM_FIELD_NUMBER;
-        hash = (53 * hash) + hashLong(getSum());
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getSum());
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;

@@ -45,7 +45,6 @@ public interface RpcServerInterface {
   void stop();
   void join() throws InterruptedException;
 
-  void setSocketSendBufSize(int size);
   InetSocketAddress getListenerAddress();
 
   Pair<Message, CellScanner> call(BlockingService service, MethodDescriptor md,

@@ -40,6 +40,7 @@ import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -182,7 +183,8 @@ class ClusterStatusListener implements Closeable {
   class MulticastListener implements Listener {
     private DatagramChannel channel;
     private final EventLoopGroup group = new NioEventLoopGroup(
-        1, Threads.newDaemonThreadFactory("hbase-client-clusterStatusListener"));
+        1, Executors.newFixedThreadPool(1, Threads.newDaemonThreadFactory(
+          "hbase-client-clusterStatusListener")));
 
     public MulticastListener() {
     }
@@ -253,7 +255,8 @@ class ClusterStatusListener implements Closeable {
 
 
       @Override
-      protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket dp) throws Exception {
+      protected void channelRead0(ChannelHandlerContext ctx,
+                                     DatagramPacket dp) throws Exception {
         ByteBufInputStream bis = new ByteBufInputStream(dp.content());
         try {
           ClusterStatusProtos.ClusterStatus csp = ClusterStatusProtos.ClusterStatus.parseFrom(bis);

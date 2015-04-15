@@ -22,6 +22,7 @@ package org.apache.hadoop.hbase.rest.filter;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,9 +32,11 @@ import org.apache.hadoop.hbase.classification.InterfaceAudience;
 public class GZIPRequestStream extends ServletInputStream
 {
   private GZIPInputStream in;
+  private final ServletInputStream base;
 
   public GZIPRequestStream(HttpServletRequest request) throws IOException {
-    this.in = new GZIPInputStream(request.getInputStream());
+    base = request.getInputStream();
+    this.in = new GZIPInputStream(base);
   }
 
   @Override
@@ -54,5 +57,21 @@ public class GZIPRequestStream extends ServletInputStream
   @Override
   public void close() throws IOException {
     in.close();
+  }
+
+  @Override
+  public boolean isFinished() {
+    return base.isFinished();
+  }
+
+  @Override
+  public boolean isReady() {
+    return base.isReady();
+  }
+
+  @Override
+  public void setReadListener(ReadListener readListener) {
+    base.setReadListener(readListener);
+
   }
 }

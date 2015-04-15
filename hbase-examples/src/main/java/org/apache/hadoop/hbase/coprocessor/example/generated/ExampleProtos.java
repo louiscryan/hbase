@@ -549,7 +549,7 @@ public final class ExampleProtos {
       hash = (19 * hash) + getDescriptorForType().hashCode();
       if (hasCount()) {
         hash = (37 * hash) + COUNT_FIELD_NUMBER;
-        hash = (53 * hash) + hashLong(getCount());
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCount());
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;

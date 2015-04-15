@@ -36,6 +36,13 @@
     </properties>
 
     <build>
+      <extensions>
+        <extension>
+            <groupId>kr.motd.maven</groupId>
+            <artifactId>os-maven-plugin</artifactId>
+            <version>1.4.0.Final</version>
+        </extension>
+      </extensions>
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -73,10 +80,46 @@
                 </execution>
             </executions>
         </plugin>
+        <plugin>
+          <groupId>com.google.protobuf.tools</groupId>
+          <artifactId>maven-protoc-plugin</artifactId>
+          <version>0.4.3</version>
+            <configuration>
+            <protocArtifact>com.google.protobuf:protoc:3.0.0-beta-1:exe:${os.detected.classifier}</protocArtifact>
+            <pluginId>grpc-java</pluginId>
+            <pluginArtifact>io.grpc:protoc-gen-grpc-java:0.9.0:exe:${os.detected.classifier}</pluginArtifact>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+                <goal>compile-custom</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>add-source</goal>
+              </goals>
+              <configuration>
+                <sources>
+                  <source>${project.build.directory}/generated-sources/main</source>
+                </sources>
+              </configuration>
+            </execution>
+          </executions>
+         </plugin>
        </plugins>
       <pluginManagement>
         <plugins>
           <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+          <!--
           <plugin>
             <groupId>org.eclipse.m2e</groupId>
             <artifactId>lifecycle-mapping</artifactId>
@@ -101,6 +144,7 @@
               </lifecycleMappingMetadata>
             </configuration>
           </plugin>
+          -->
          </plugins>
       </pluginManagement>
     </build>
@@ -126,6 +170,22 @@
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
       </dependency>
+      <dependency>
+        <groupId>io.grpc</groupId>
+        <artifactId>grpc-core</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>io.grpc</groupId>
+        <artifactId>grpc-netty</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>io.grpc</groupId>
+         <artifactId>grpc-stub</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>io.grpc</groupId>
+         <artifactId>grpc-protobuf</artifactId>
+      </dependency>
     </dependencies>
 
     <profiles>
@@ -150,6 +210,11 @@
           </activation>
           <build>
             <plugins>
+              <!-- Use Gradle to build the GRPC bindings as there's a working plugin for that
+                   https://github.com/google/protobuf-gradle-plugin
+                   The maven one is coming soon so switch to that when it's ready
+              -->
+              <!--
               <plugin>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-maven-plugins</artifactId>
@@ -200,12 +265,15 @@
                           <include>ZooKeeper.proto</include>
                         </includes>
                       </source>
+                      -->
                       <!--<output>${project.build.directory}/generated-sources/java</output>-->
+                     <!--
                      <output>${basedir}/src/main/java/</output>
                     </configuration>
                   </execution>
                 </executions>
               </plugin>
+              -->
             </plugins>
           </build>
         </profile>
