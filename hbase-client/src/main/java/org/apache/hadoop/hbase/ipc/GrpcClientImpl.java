@@ -100,7 +100,7 @@ public class GrpcClientImpl extends AbstractRpcClient {
     return ManagedChannelBuilder.forAddress(remoteId.getAddress().getHostName(),
         remoteId.getAddress().getPort())
         .usePlaintext(true)
-        .executor(MoreExecutors.newDirectExecutorService())
+        .executor(MoreExecutors.directExecutor())
         .build();
   }
 

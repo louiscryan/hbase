@@ -49,12 +49,10 @@ import org.apache.hadoop.security.authorize.ServiceAuthorizationManager;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
-import java.lang.invoke.MethodType;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
 
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
@@ -249,7 +247,7 @@ public class GrpcServer implements RpcServerInterface {
     // Build the GRPC server
     NettyServerBuilder nettyServerBuilder = NettyServerBuilder
         .forAddress(bindAddress)
-        .executor(MoreExecutors.newDirectExecutorService())
+        .executor(MoreExecutors.directExecutor())
         .flowControlWindow(1048576);
     for (RpcServer.BlockingServiceAndInterface service : services) {
       nettyServerBuilder.addService(bindService(service));

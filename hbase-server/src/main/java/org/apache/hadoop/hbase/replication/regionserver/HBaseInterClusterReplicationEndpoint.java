@@ -282,13 +282,6 @@ public class HBaseInterClusterReplicationEndpoint extends HBaseReplicationEndpoi
     notifyStopped();
   }
 
-  // is this needed? Nobody else will call doStop() otherwise
-  @Override
-  public State stopAndWait() {
-    doStop();
-    return super.stopAndWait();
-  }
-
   private class Replicator implements Callable<Integer> {
     private List<Entry> entries;
     private int ordinal;
